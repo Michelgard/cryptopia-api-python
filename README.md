@@ -1,5 +1,6 @@
 # Cryptopia python API by CC Tech
 The Bot Guy (thebotguy@protonmail.com)
+
 Fork by Michelgard (contact@blog-de-michel.fr) Python3
 
 ## Overview
