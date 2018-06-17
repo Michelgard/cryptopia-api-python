@@ -1,4 +1,5 @@
 """ This is a wrapper for Cryptopia.co.nz API """
+Version Python3 from Michelgard
 
 
 import json
@@ -7,6 +8,7 @@ import hmac
 import hashlib
 import base64
 import requests
+import urllib.parse
 
 # using requests.compat to wrap urlparse (python cross compatibility over 9000!!!)
 from requests.compat import quote_plus
@@ -163,16 +165,12 @@ class Api(object):
                                                'Amount': amount})
 
     def secure_headers(self, url, post_data):
-        """ Creates secure header for cryptopia private api. """
-        nonce = str(time.time() )
-        md5 = hashlib.md5()
-        jsonparams = post_data.encode('utf-8')
-        md5.update(jsonparams)
-        rcb64 = base64.b64encode(md5.digest()).decode('utf-8')
-        
-        signature = self.key + "POST" + quote_plus(url).lower() + nonce + rcb64
-        hmacsignature = base64.b64encode(hmac.new(base64.b64decode(self.secret),
-                                                  signature.encode('utf-8'),
-                                                  hashlib.sha256).digest())
-        header_value = "amx " + self.key + ":" + hmacsignature.decode('utf-8') + ":" + nonce
-        return {'Authorization': header_value, 'Content-Type': 'application/json; charset=utf-8'}
+        nonce = str( int( time.time() ) )
+        m = hashlib.md5()
+        m.update(post_data.encode())
+        requestContentBase64String = base64.b64encode(m.digest())
+        signature = self.key + "POST" + urllib.parse.quote_plus( url ).lower() + nonce + requestContentBase64String.decode()
+        hmacsignature = base64.b64encode(hmac.new(base64.b64decode( self.secret ), signature.encode(), hashlib.sha256).digest()).decode()
+        header_value = "amx " + self.key + ":" + hmacsignature + ":" + nonce
+        headers = { 'Authorization': header_value, 'Content-Type':'application/json; charset=utf-8' }
+        return headers
