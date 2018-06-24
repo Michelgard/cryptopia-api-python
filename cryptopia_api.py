@@ -1,5 +1,5 @@
 """ This is a wrapper for Cryptopia.co.nz API """
-Version Python3 from Michelgard
+"""Version Python3 from Michelgard"""
 
 
 import json
